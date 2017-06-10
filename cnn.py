@@ -21,6 +21,37 @@ def conv2d( x, W ):
 def max_pool_2x2( x ):
 	return tf.nn.max_pool( x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME' )
 
+def evaluate( accuracy ):
+	sz = mnist.test.images.shape[0]
+	size_of_block = 800
+	i = 0
+	cnt = 0
+	while True:
+		if i+size_of_block<=sz:
+			cnt = cnt + size_of_block * accuracy.eval( feed_dict = { x: mnist.test.images[i: i+size_of_block], y_: mnist.test.labels[ i: i+size_of_block ], keep_prob: 1.0} )
+			i = i + size_of_block
+		else:
+			size_of_block = sz - i
+			cnt = cnt + size_of_block * accuracy.eval( feed_dict = { x: mnist.test.images[i: i+size_of_block], y_: mnist.test.labels[ i: i+size_of_block ], keep_prob: 1.0} )
+			break
+	return cnt*1.0/sz
+
+def evaluate_vad( accuracy ):
+	sz = mnist.validation.images.shape[0]
+	size_of_block = 800
+	i = 0
+	cnt = 0
+	while True:
+		if i+size_of_block<=sz:
+			cnt = cnt + size_of_block * accuracy.eval( feed_dict = { x: mnist.validation.images[i: i+size_of_block], y_: mnist.validation.labels[ i: i+size_of_block ], keep_prob: 1.0} )
+			i = i + size_of_block
+		else:
+			size_of_block = sz - i
+			cnt = cnt + size_of_block * accuracy.eval( feed_dict = { x: mnist.validation.images[i: i+size_of_block], y_: mnist.validation.labels[ i: i+size_of_block ], keep_prob: 1.0} )
+			break
+	return cnt*1.0/sz
+
+
 W_conv1 = weight_variable( [5, 5, 1, 32] )
 b_conv1 = bias_variable( [32] )
 
@@ -56,12 +87,18 @@ correct_prediction = tf.equal( tf.argmax( y_conv, 1 ), tf.argmax( y_,1 ) )
 accuracy = tf.reduce_mean( tf.cast( correct_prediction, tf.float32 ) )
 sess.run( tf.global_variables_initializer() )
 
-for i in range( 20000 ):
+for i in range( 30000 ):
 	batch = mnist.train.next_batch( 50 )
 	if i % 100 == 0:
 		train_accuracy = accuracy.eval( feed_dict = {x:batch[0], y_:batch[1], keep_prob: 1.0} )
-		print( "step %d, training accuracy %g"%(i, train_accuracy) )
+		validation_accuracy = evaluate_vad( accuracy )
+		print( "step %d, training accuracy %g, validation accuracy %g"%(i, train_accuracy, validation_accuracy) )
+		evaluate(accuracy)
+	if i % 1000 ==0:
+		test_accuracy = evaluate( accuracy )
+		print( "************* testing accuracy %g **************"%(test_accuracy) )
 	train_step.run( feed_dict = { x:batch[0], y_:batch[1], keep_prob: 0.5 } )
 
-test_accuracy = accuracy.eval( feed_dict={ x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0 } )
+test_accuracy = evaluate( accuracy )
+#test_accuracy = accuracy.eval( feed_dict={ x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0 } )
 print("test accuracy %g"%test_accuracy)
