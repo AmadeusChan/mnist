@@ -15,8 +15,13 @@ print y_train
 
 df = pd.read_csv( 'test.csv' )
 x_test = df.values
+<<<<<<< HEAD
 #print x_test.shape
 #print x_test
+=======
+print x_test.shape
+print x_test
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 
 # to split trainning set into two sets, one of which is employed to train the model while another is used to validate it for model selection
 
@@ -28,9 +33,12 @@ y_valid = train[:size_of_validation_set, :1]
 x_train = train[size_of_validation_set:, 1:]
 y_train = train[size_of_validation_set:, :1]
 
+<<<<<<< HEAD
 x_train = x_train / 255.0
 x_valid = x_valid / 255.0
 
+=======
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 def get_batch( sz ):
 	batch_x = np.ndarray( shape=(0,784) )
 	batch_y = np.ndarray( shape=(0,10) )
@@ -54,10 +62,17 @@ def to_one_hot( arr ):
 		tmp = np.append(tmp, x, axis=0)
 	return tmp
 
+<<<<<<< HEAD
 #print y_valid.shape
 #print x_train.shape
 #print y_train.shape
 #print y_train
+=======
+print y_valid.shape
+print x_train.shape
+print y_train.shape
+print y_train
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 
 """
 z = to_one_hot( y_valid )
@@ -91,7 +106,10 @@ train_step = tf.train.GradientDescentOptimizer( 0.1 ).minimize( cross_entropy )
 sess = tf.InteractiveSession()
 tf.global_variables_initializer().run()
 
+<<<<<<< HEAD
 """
+=======
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 for _ in range(1000):
 	batch_xs, batch_ys = get_batch( 100 ) 
 	sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
@@ -99,6 +117,7 @@ for _ in range(1000):
 correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 print(sess.run(accuracy, feed_dict={x: x_valid, y_: y_valid}))
+<<<<<<< HEAD
 """
 
 f = file( "result_of_softmax.txt", "a" )
@@ -106,6 +125,11 @@ f.write('\n')
 f.close()
 
 for _ in range(20000):
+=======
+
+"""
+for _ in range(10000):
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 	batch_xs, batch_ys = get_batch( 100 ) 
 	sess.run( train_step, feed_dict={x: batch_xs, y_:batch_ys} )
 	if _%100 ==0:
@@ -114,8 +138,12 @@ for _ in range(20000):
 		training_accuracy = sess.run( accuracy, feed_dict={x: batch_xs, y_: batch_ys} )
 		validation_accuracy = sess.run( accuracy, feed_dict={x: x_valid, y_: y_valid} )
 		print "step %d, trainning accuracy %g, validation accuracy %g"%(_, training_accuracy, validation_accuracy)
+<<<<<<< HEAD
 		f = file( "result_of_softmax.txt", "a" )
 		f.write('%d %g %g\n'%(_, training_accuracy, validation_accuracy))
 		f.close()
+=======
+"""
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 
 

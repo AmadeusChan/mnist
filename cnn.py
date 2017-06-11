@@ -25,7 +25,11 @@ def max_pool_2x2( x ):
 
 def evaluate( accuracy ):
 	sz = mnist.test.images.shape[0]
+<<<<<<< HEAD
 	size_of_block = 300
+=======
+	size_of_block = 800
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 	i = 0
 	cnt = 0
 	while True:
@@ -40,7 +44,11 @@ def evaluate( accuracy ):
 
 def evaluate_vad( accuracy ):
 	sz = mnist.validation.images.shape[0]
+<<<<<<< HEAD
 	size_of_block = 300
+=======
+	size_of_block = 800
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 	i = 0
 	cnt = 0
 	while True:
@@ -54,8 +62,13 @@ def evaluate_vad( accuracy ):
 	return cnt*1.0/sz
 
 
+<<<<<<< HEAD
 W_conv1 = weight_variable( [5, 5, 1, 64] )
 b_conv1 = bias_variable( [64] )
+=======
+W_conv1 = weight_variable( [5, 5, 1, 32] )
+b_conv1 = bias_variable( [32] )
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 
 x_image = tf.reshape( x, [-1, 28, 28, 1] )
 
@@ -90,20 +103,27 @@ correct_prediction = tf.equal( tf.argmax( y_conv, 1 ), tf.argmax( y_,1 ) )
 accuracy = tf.reduce_mean( tf.cast( correct_prediction, tf.float32 ) )
 sess.run( tf.global_variables_initializer() )
 
+<<<<<<< HEAD
 f = file( 'result.txt', 'a' )
 f.write('\n')
 f.close()
 
 for i in range( 150000 ):
+=======
+for i in range( 30000 ):
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 	batch = mnist.train.next_batch( 50 )
 	if i % 100 == 0:
 		train_accuracy = accuracy.eval( feed_dict = {x:batch[0], y_:batch[1], keep_prob: 1.0} )
 		validation_accuracy = evaluate_vad( accuracy )
 		print( "step %d, training accuracy %g, validation accuracy %g"%(i, train_accuracy, validation_accuracy) )
 		evaluate(accuracy)
+<<<<<<< HEAD
 		f = file( "result.txt", "a" )
 		f.write("%d %g %g\n"%(i, train_accuracy, validation_accuracy))
 		f.close()
+=======
+>>>>>>> e33623129c215b2048f84f1130703cd02ca9bbc3
 	if i % 1000 ==0:
 		test_accuracy = evaluate( accuracy )
 		print( "************* testing accuracy %g **************"%(test_accuracy) )
