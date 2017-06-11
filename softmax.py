@@ -1,5 +1,69 @@
-from tensorflow.examples.tutorials.mnist import input_data
-mnist = input_data.read_data_sets( 'MNIST/data', one_hot=True )
+import pandas as pd
+import numpy as np
+
+# to import data set, in particular trainning set from train.csv and testing set from test.csv
+df = pd.read_csv( 'train.csv' )
+train = df.values
+
+"""
+x_train = train[:,1:]
+y_train = train[:,:1]
+print x_train.shape
+print y_train.shape
+print y_train
+"""
+
+df = pd.read_csv( 'test.csv' )
+x_test = df.values
+print x_test.shape
+print x_test
+
+# to split trainning set into two sets, one of which is employed to train the model while another is used to validate it for model selection
+
+np.random.shuffle( train )
+size_of_validation_set = int( train.shape[0]/3 )
+
+x_valid = train[:size_of_validation_set, 1:]
+y_valid = train[:size_of_validation_set, :1]
+x_train = train[size_of_validation_set:, 1:]
+y_train = train[size_of_validation_set:, :1]
+
+def get_batch( sz ):
+	batch_x = np.ndarray( shape=(0,784) )
+	batch_y = np.ndarray( shape=(0,10) )
+	for i in range(sz):
+		pt = np.random.randint( 0, x_train.shape[0] )
+		batch_x = np.append( batch_x, x_train[pt: pt+1,:], axis=0 )
+		batch_y = np.append( batch_y, y_train[pt: pt+1,:], axis=0 )
+	return batch_x, batch_y
+
+def to_one_hot( arr ):
+	tmp = np.ndarray( shape=( 0, 10 ) )
+	cnt = 0 
+	sz = arr.shape[0]
+	for i in range(sz):
+		x = np.ndarray( shape=(1, 10) )
+		for j in range(10):
+			if j==arr[i]:
+				x[0, j]=1
+			else:
+				x[0, j]=0
+		tmp = np.append(tmp, x, axis=0)
+	return tmp
+
+print y_valid.shape
+print x_train.shape
+print y_train.shape
+print y_train
+
+"""
+z = to_one_hot( y_valid )
+print z.shape
+"""
+
+y_valid = to_one_hot( y_valid )
+y_train = to_one_hot( y_train )
+
 
 import tensorflow as tf
 x = tf.placeholder( tf.float32, [None, 784] )
@@ -16,10 +80,10 @@ sess = tf.InteractiveSession()
 tf.global_variables_initializer().run()
 
 for _ in range(0, 2000):
-	batch_xs, batch_ys = mnist.train.next_batch( 100 )
+	batch_xs, batch_ys = get_batch( 100 )
 	sess.run( train_step, feed_dict={x:batch_xs, y_:batch_ys} )
 
 correct_prediction = tf.equal( tf.argmax( y, 1 ), tf.argmax( y_, 1 ) )
 accuracy = tf.reduce_mean( tf.cast( correct_prediction, tf.float32 ) )
 
-print( sess.run( accuracy, feed_dict = { x:mnist.test.images, y_:mnist.test.labels } ) )
+print( sess.run( accuracy, feed_dict = { x:x_valid, y_:y_valid } ) )

@@ -1,0 +1,2 @@
+model_checkpoint_path: "convolutional_multilayer_network_4"
+all_model_checkpoint_paths: "convolutional_multilayer_network_4"
