@@ -12,7 +12,7 @@ x_test = df.values
 # to split trainning set into two sets, one of which is employed to train the model while another is used to validate it for model selection
 
 np.random.shuffle( train )
-size_of_validation_set = int( train.shape[0]/8 )
+size_of_validation_set = int( train.shape[0]/3 )
 
 x_valid = train[:size_of_validation_set, 1:]
 y_valid = train[:size_of_validation_set, :1]
@@ -68,7 +68,7 @@ def max_pool_2x2( x ):
 
 def evaluate( accuracy, data_x, data_y ):
 	sz = data_x.shape[0]
-	size_of_block = 300
+	size_of_block = 100
 	i = 0
 	cnt = 0
 	while True:
@@ -146,11 +146,11 @@ f.write('\n')
 f.close()
 
 saver = tf.train.Saver()
-model_name = "convolutional_multilayer_network_2"
+model_name = "convolutional_multilayer_network_origin"
 highest_valid_accuracy = 0
 
 for _ in range(50000):
-	batch_xs, batch_ys = get_batch( 150 ) 
+	batch_xs, batch_ys = get_batch( 50 ) 
 	if _%50==0:
 		train_accuracy = evaluate( accuracy, batch_xs, batch_ys )
 		valid_accuracy = evaluate( accuracy, x_valid, y_valid )
@@ -162,17 +162,17 @@ for _ in range(50000):
 			print "Highest validation accuracy!"
 			saver.save( sess, os.path.join(".", model_name) )
 			highest_valid_accuracy=valid_accuracy
+
 	train_step.run( feed_dict={x: batch_xs, y_: batch_ys, keep_prob:0.5} )
 
-print "Highest Validation Accuracy = %g!"%(highest_valid_accuracy)
-saver = tf.train.Saver([W_conv1, b_conv1, W_conv2, b_conv2, W_fc1, b_fc1, W_fc2, b_fc2])
+saver = tf.train.Saver([W_conv1, b_conv1, W_conv2, b_conv2, W_conv3, b_conv3, W_fc1, b_fc1, W_fc2, b_fc2, W_fc3, b_fc3])
 saver.restore(sess, model_name)
 
 y_pred = np.ndarray( shape=(0,10) )
 
 sz = x_test.shape[0]
 bl = 300
-pt = 0
+pt = 0 
 while True:
 	if pt+bl<=sz:
 		y_tmp = sess.run( y_conv, feed_dict = { x: x_test[ pt: pt+bl ], keep_prob: 1.0 } )
@@ -187,14 +187,13 @@ while True:
 
 y_test = np.argmax( y_pred, 1 )
 
-f = file( "prediction_by_convolutional_multilayer_network_2.csv", "w" )
+f = file( "prediction_by_convolutional_multilayer_network_origin.csv", "w" )
 f.write("ImageId,Label\n")
 n = y_test.shape[0]
 for i in range(n):
 	f.write("%d,%d\n"%(i+1, y_test[i]))
 
 f.close()
-
 
 """
 	sess.run( train_step, feed_dict={x: batch_xs, y_:batch_ys} )
