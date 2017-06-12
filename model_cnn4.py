@@ -152,7 +152,7 @@ model_name = "convolutional_multilayer_network_4"
 highest_valid_accuracy = 0
 
 for _ in range(1000000):
-	batch_xs, batch_ys = get_batch( 350 ) 
+	batch_xs, batch_ys = get_batch( 110 ) 
 	if _%50==0:
 		train_accuracy = evaluate( accuracy, batch_xs, batch_ys )
 		valid_accuracy = evaluate( accuracy, x_valid, y_valid )
@@ -164,7 +164,7 @@ for _ in range(1000000):
 			print "Highest validation accuracy!"
 			saver.save( sess, os.path.join(".", model_name) )
 			highest_valid_accuracy=valid_accuracy
-	train_step.run( feed_dict={x: batch_xs, y_: batch_ys, keep_prob:0.4} )
+	train_step.run( feed_dict={x: batch_xs, y_: batch_ys, keep_prob:0.3} )
 
 print "Highest Validation Accuracy = %g!"%(highest_valid_accuracy)
 saver = tf.train.Saver([W_conv1, b_conv1, W_conv2, b_conv2, W_conv3, b_conv3, W_fc1, b_fc1, W_fc2, b_fc2])
